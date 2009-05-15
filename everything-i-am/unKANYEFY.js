@@ -4,23 +4,24 @@ function unKANYEFY() {
       /* KANYE TAXONOMY... */
       proper_nouns : [
         /* kanYe! & Co. */
-        'al', 'kanYe West', 'kanYe', 'Mr. West', 
+        'al', 'kanYe West', 'kanYe', 'Mr. West', 'Kanye\'s',
         /* Products */
         'Louie Vuitton', 'Louis Vuitton', 'Bentley', 'Chanel', 'Vibe', 'Apple', 'Twitter', 'Nike',
         /* Rappers */
-        'Pharrell', 'Andre 3000', 'Jay-Z', 'Beyonce', 'Noreaga', 'Yeezy', 'YeYo', 'M.I.A', 'PINK', 'Talib Kweli', 'Diddy',
+        'Pharrell', 'Andre 3000', 'Jay-Z', 'Beyonce', 'Noreaga', 'Yeezy', 'YeYo', 'M.I.A', 'PINK', 'Talib Kweli', 'Diddy', 'Madonna', 'Amber',
         /* Places */
         'LA', 'CA', 'California', 'Cali', 'Los Angeles', 'Miami', 'NYC', 'New York City', 'New York', 'Chi-town', 'Chicago', 'SoHo', 'Chi-city', 'IL', 'NY', 'USA', 'SF', 'San Francisco', 'Florida', 'FL',
         /* Lingo */
-        'WTF', 'OMG', 'LOL', 'HAHA', 'HEHE', 'I', 'CAPS LOCK'
+        'WTF', 'OMG', 'LOL', 'HAHA', 'HEHE', 'I', 'CAPS LOCK',
+        /* CREDIT */
+        'FFFFFAT', 'FAT Lab', 'F.A.T. Lab', 'FFFFF.AT'
       ],
       skip_words : ['is'],
-      always_downcase : ['a', 'the', 'an', 'of', 'by'], 
       alphabet : ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
       marks : ['.', ',', '?', '!', '"', '\'', ':', ';', ')', '('],
       types : ['s', '\'s', 's\'', ''],
       lc : {proper_nouns : []},
-      obj : {proper_nouns_lc : {}, skip_words : {}},
+      obj : {proper_nouns_lc : [], skip_words : []},
 
       /* Repair the damage... */
   	  _eval : function(val) {
@@ -35,7 +36,6 @@ function unKANYEFY() {
             if (/[A-Z0-9\-\.\!\?]+/.test(val[i])) {
               val[i] = val[i].toLowerCase();
               // Do a quick match to proper_nouns
-              //var k = jQuery.inArray(val[i], proper_nouns_lc);
               if ($.unKANYEFY.obj.proper_nouns[val[i]] >= 0) val[i] = $.unKANYEFY.proper_nouns[$.unKANYEFY.obj.proper_nouns[val[i]]];
             }
           }
@@ -45,7 +45,7 @@ function unKANYEFY() {
           for (var i=0; i<$.unKANYEFY.proper_nouns.length; i++) {
             var x = $.unKANYEFY.lc.proper_nouns[i].replace(/\./g, '\\\.').replace(/\|/g, '\\\|');
             for (var j=0; j<$.unKANYEFY.types.length; j++) {
-              if ($.unKANYEFY.obj.skip_words[(x+''+$.unKANYEFY.types[j])] < 0) {
+              if ($.unKANYEFY.obj.skip_words[(x+' '+$.unKANYEFY.types[j])] < 0) {
                 var z = $.unKANYEFY.types[j].replace('\'', '\\\'');
                 // Quick match
                 var r = new RegExp('(\\s'+x+z+'\\s)|(\\s'+x+z+'$)|^('+x+z+'\\s)', 'g');
@@ -70,24 +70,31 @@ function unKANYEFY() {
         // ITS THAT EASY!
         return val;
       },
-      _make_lowercase_array : function(arr) {var arr_lc = arr; if (typeof(arr_lc) == 'object') {for (i=0; i<arr_lc.length; i++) arr_lc[i] = arr_lc[i].toLowerCase();} return arr_lc;},
-      _make_keyed_object : function(arr) {var obj = {}; if (typeof(arr) == 'object') {for (i=0; i<arr.length; i++) obj[ arr[i] ] = i;} return obj;},
-  	  init : false
+      _make_lowercase_array : function(arr) {var arr_lc = []; if (typeof(arr) == 'object') {for (i=0; i<arr.length; i++) arr_lc[i] = arr[i].toLowerCase();} return arr_lc;},
+      _make_keyed_object : function(arr) {var arr_k = {}, v; if (typeof(arr) == 'object') {for (i=0; i<arr.length; i++) {v = arr[i]; arr_k[v] = i;}} return arr_k;},
+  	  init : false, interval : false, done : false,
+  	  close : function () {jQuery("#unkanyefy_load").fadeOut(500, function() {jQuery(this).remove();});},
+  	  timeout : function(i) {
+  	    setTimeout(function() {if ($.unKANYEFY.done) {$.unKANYEFY.close();} else {$.unKANYEFY.timeout(250);}}, i);
+      }
     };
 
     $.fn.unKANYEFY = function(settings) {
       if (!$.unKANYEFY.init) {
         $.unKANYEFY.lc.proper_nouns = $.unKANYEFY._make_lowercase_array($.unKANYEFY.proper_nouns);
-        $.unKANYEFY.obj.proper_nouns = $.unKANYEFY._make_lowercase_array($.unKANYEFY.lc.proper_nouns);
-        $.unKANYEFY.obj.skip_words = $.unKANYEFY._make_lowercase_array($.unKANYEFY.skip_words);
+        $.unKANYEFY.obj.proper_nouns = $.unKANYEFY._make_keyed_object($.unKANYEFY.lc.proper_nouns);
+        $.unKANYEFY.obj.skip_words = $.unKANYEFY._make_keyed_object($.unKANYEFY.skip_words);
 
         // Make an attempt to force normalize text case (esp. if using KANYEIFY)
         jQuery('style#KANYEIFY').remove();
-        jQuery('body').append('<style type="text/css" id="KANYEIFY">html, body {text-transform: normal !important;}</style>');
+        jQuery('body').append('<style type="text/css" id="KANYEIFY">html, body {text-transform: none !important;}</style>');
         $.unKANYEFY.init = true;
       }
 
-      return this.each(function() {
+      $.unKANYEFY.timeout(2000);
+
+
+      var done = this.each(function() {
         if (this.nodeType == 1) {
           var g = this.tagName.toLowerCase();
           if (this.className == 'unKANYEFY' || g == 'style' || g == 'object' || g == 'embed' || g == 'head' || g == 'img' || g == 'script') return this;
@@ -107,7 +114,11 @@ function unKANYEFY() {
             // what do you want me to do?
           }
         }
-      }).find("#unkanyefy_load").fadeOut(1000, function() {$(this).remove();});
+      });
+      
+      jQuery('img[src=http://www.kanyeuniversecity.com/images/blogHeader.gif]').attr('src', 'everything-i-am/logo_lowercase.gif');
+      $.unKANYEFY.done = true;
+      return done;
     };
   })(jQuery);
 

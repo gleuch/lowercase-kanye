@@ -8,6 +8,8 @@
     4. PROFIT!
 */
 
+error_reporting(0);
+
 
 $WhereAreYa = new Yeezy();
 
@@ -83,7 +85,7 @@ class Yeezy {
     // Break out!
     list($this->content['header'], $this->content['content']) = explode('<body>', file_get_contents($this->Yeezy .'/'. $this->page));
     list($this->content['content'], $this->content['footer']) = explode('</body>', $this->content['content']);
-    
+
     // Cleanup header
     $f = array('/(href|src)(\=\"\/)/im', '/(href|src)(\=")(?!http)/im');
     $r = array('${1}="'. dirname($this->Yeezy) .'/', '${1}="'. $this->Yeezy .'/');
@@ -91,14 +93,17 @@ class Yeezy {
     $this->content['header'] = preg_replace('/(<title>)/i', '${1}lowercasekanye.com » ', $this->content['header']);
 
     // Cleanup Content
-    $f = array('/(\.\.\/includes\/nav\.php)/im', '/(href)(\=\")(\/blog)(\/)?/im', '/(href)(\=\")(http|https)(\:\/\/)(www\.)?(kanyeuniversecity\.com)(?!\/client_images)(\/blog)?(\/)/im', '/(SWFObject\(\")(\/)(swf)/im', '/(\.\.)(\/)/im', '/(src=\")(\/images)/im', '/(href)(\=\")(\/)/im');
-    $r = array($this->Persona .'nav.html', '${1}${2}'. $this->Persona, '${1}${2}'. $this->Persona .'${8}', '${1}'. $this->Persona . $this->Asssssets, dirname($this->Yeezy) .'/', '${1}'. dirname($this->Yeezy) .'${2}', '${1}${2}'. dirname($this->Yeezy) .'${3}');
+    $f = array('/(\.\.\/includes\/nav\.php)/im', '/(href)(\=\")(\/blog)(\/)?/im', '/(href)(\=\")(http|https)(\:\/\/)(www\.)?(kanyeuniversecity\.com)(?!\/client_images|\/synd)(\/blog)?(\/)/im', '/(SWFObject\(\")(\/)(swf)/im', '/(\.\.)(\/)/im', '/(src=\")(\/images)/im', '/(href)(\=\")(\/)/im', '/(\/\/)(so.addParam)/im');
+    $r = array($this->Persona .'nav.html', '${1}${2}'. $this->Persona, '${1}${2}'. $this->Persona .'${8}', '${1}'. $this->Persona . $this->Asssssets, dirname($this->Yeezy) .'/', '${1}'. dirname($this->Yeezy) .'${2}', '${1}${2}'. dirname($this->Yeezy) .'${3}', '${2}');
     $this->content['content'] = preg_replace($f, $r, $this->content['content']);
-
+    
+    
+    // OH YEAH. WE HATE ADS.
+    $this->content['content'] = preg_replace(array("/(http|https)(\:\/\/)([a-z0-9\-\.]+)(fmpub|doubleclick)([a-z0-9\-\.\/\;\=\?]+)/im", "/(src=)(\"\"|''|\"' \+ ord \+ '\?\")/im"), '', $this->content['content']);
 
     // Making it FFFFF.AT!!!!!!!!
-    $this->content['content'] = preg_replace("/(id\=\"linksList\"\>)/im", '${1}<li><a href="http://www.fffff.at">My homies @ FFFFF.AT!!!!!</a></li>', $this->content['content']);
-    $this->content['content'] = preg_replace("/(\<div id\=\"footer\"\>)([\s\S\n]+)(\<\/div\>)/im", '${1}<div style="color: #ff00ff;">hacked by <a style="color: #fff000;" href="http://www.fffff.at">FFFFF.AT</a> with loves and hugs.</div>${3}', $this->content['content']);
+    $this->content['content'] = preg_replace("/(id\=\"linksList\"\>)/im", '${1}<li><a href="http://www.fffff.at" target="_fffffat">My homies @ FFFFF.AT!!!!!</a></li>', $this->content['content']);
+    $this->content['content'] = preg_replace("/(\<div id\=\"footer\"\>)([\s\S\n]+)(\<\/div\>)/im", '${1}<div style="color: #ff00ff;">hacked by <a style="color: #fff000;" href="http://www.fffff.at" target="_fffffat">FFFFF.AT</a> with loves and hugs.</div>${3}', $this->content['content']);
 
     // We want the hits.......
     $this->content['content'] = preg_replace("/(\<script src\=\"http\:\/\/www\.google)([\s\S\n]+)(<\/script>)([\s\S\n]+)(<\/script>)/im", "<script type=\"text/javascript\">var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));</script>\n<script type=\"text/javascript\">try {var pageTracker = _gat._getTracker(\"UA-2855868-12\");pageTracker._trackPageview();} catch(err) {}</script>", $this->content['content']);
@@ -106,8 +111,11 @@ class Yeezy {
     // Add unKANYEIFY to footer
     $this->content['content'] .= '<script type="text/javascript" src="'. $this->Persona . $this->Asssssets .'/unKANYEFY.js"></script>';
 
+
     // Getting ready to drop jams!
-    $this->ShoesAndCars = $this->content['header'] ."\n<body><div id=\"unkanyefy_load\" style=\"position: fixed; background: url(". $this->Persona . $this->Asssssets ."/bg.png) top left repeat; top: 0; left: 0; width: 100%; height: 100%; z-index: 9000;\"><img style=\"display: block; margin: 150px auto 0 auto;\" src=\"". $this->Persona . $this->Asssssets ."/loading.gif\" /></div>\n". $this->content['content'] ."\n</body>\n".$content['footer'];
+    $this->content['header'] .= "<style type=\"text/css\">#fffffat {position: absolute; font-weight: bold; width: 100%; border-bottom: 3px solid #ff00ff; top: 0; left: 0; height: auto; background: #FFF000; color: #000; margin: 0; text-align: center; font-size: 14px; z-index: 1100;}#fffffat div {padding: 12px 20px;}#fffffat a {color: #FF00FF;}#fffffat a:hover {color: #000;}#fffffat strong {text-transform: uppercase !important;}#fffffat span {font-size: 12px; padding-left: 12px; font-weight: normal;}#fffffat span a:last-child {text-transform: lowercase !important;}#unkanyefy_load {position: fixed; background: url(". $this->Persona . $this->Asssssets ."/bg.png) top left repeat; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;}#unkanyefy_load div {text-align: center; width: 450px; margin: 150px auto 0 auto;}#unkanyefy_load div p {padding: 0; margin: 10px 0 0 0; font-size: 18px; font-weight: bold; color: #000;}</style>";
+
+    $this->ShoesAndCars = $this->content['header'] ."\n<body style=\"margin-top: 45px;\"><div id=\"fffffat\" class=\"unKANYEFY\"><div><strong>LOWERCASE KANYE</strong>, a <a href=\"http://fffff.at\" target=\"_fffffat\"><strong>F.A.T. Lab</strong> project</a>. <span style=\"text-transform: none !important;\"><a href=\"http://fffff.at/lowercase-kanye\" target=\"_fffffat\">Read about this project</a> and get the <a href=\"http://www.github.com/gleuch/unKANYEFY\" target=\"_srcode\">source code</a>.</span></div></div><div id=\"unkanyefy_load\" class=\"unKANYEFY\"><div><img src=\"". $this->Persona . $this->Asssssets ."/loading.gif\" /><p>Please be patient while we repair the damage done by Kanye’s CAPS LOCK button.</p></div></div>\n". $this->content['content'] ."\n</body>\n".$content['footer'];
 
     // Cache the file (except for graduates)
     if (!$this->Graduation) file_put_contents('./'. $this->GettingLaid .'/'. $this->GettingPaid, $this->ShoesAndCars);
