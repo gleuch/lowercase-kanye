@@ -1,0 +1,8 @@
+DirectoryIndex yeezy.php index.html
+
+RewriteEngine On
+RewriteBase /
+ 
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ yeezy.php?chicago=$1 [L,QSA]
